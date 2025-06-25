@@ -21,27 +21,30 @@ const Search = () => {
 
   useEffect(() => {
     response();
-  }, []);
+  }, [searchresult]);
 
   function handleClick(id) {
     console.log("click");
-    Navigate(`/movieinfo/${id}`)
+    Navigate(`/movieinfo/${id}`);
   }
   if (searchdata) {
     return (
-      <div className="w-full flex flex-wrap gap-4 justify-center items-center pt-4 bg-black text-white">
-        {searchdata.map((data) => {
-          return (
-            <div key={data.id} className="flex  flex-col  cursor-pointer">
-              <img
-                src={`https://image.tmdb.org/t/p/original${data.poster_path}`}
-                className=" h-[300px] w-[300px] object-fit rounded-lg"
-                onClick={() => handleClick(data.id)}
-              />
-              <p className="text-xl font-semibold pt-2 gap-2">{data.title}</p>
-            </div>
-          );
-        })}
+      <div className="w-full max-w-full gap-4 justify-center items-center p-14 bg-black text-white pt-[100px]">
+        <div className="grid gap-10 rid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {searchdata.map((data) => {
+            return (
+              <div key={data.id} className="flex  flex-col  cursor-pointer">
+                <img
+                  src={`https://image.tmdb.org/t/p/original${data.poster_path}`}
+                  alt={data.title}
+                  className=" h-[300px] w-[300px] object-fit rounded-lg"
+                  onClick={() => handleClick(data.id)}
+                />
+                <p className="text-xl font-semibold pt-2 gap-2">{data.title}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   } else {

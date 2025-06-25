@@ -1,57 +1,48 @@
-import axios from "axios";
+import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-const Navbar = () => {
-  const [movieSearch, setMovieSearch] = useState();
-  const Navigate = useNavigate();
-  function handleChange(e) {
-    setMovieSearch(e.target.value);
-    console.log(movieSearch);
-  }
-  function clickHandlerHome() {
-    Navigate("/");
-  }
+import axios from "axios";
 
-  function clickHandlerTopRated() {
-    Navigate("/toprated");
-  }
-  function clickHandlerUpComings() {
-    Navigate("/upcomings");
-  }
+const SearchPage = () => {
+  const { query } = useParams();
+  const [results, setResults] = useState([]);
 
-  function searchHandler(value) {
-    Navigate(`/search/${value}`);
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!query) return;
+      try {
+        const res = await axios.get(
+          `https://api.themoviedb.org/3/search/movie?api_key=4e44d9029b1270a757cddc766a1bcb63&language=en-US&query=${query}`
+        );
+        setResults(res.data.results);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, [query]);
+
   return (
-    <div className="w-full h-[80px] bg-[#404040] p-5 text-white sticky">
-      <nav className="flex justify-between items-center">
-        <h1 className="text-4xl">OMDB</h1>
-        <p onClick={clickHandlerHome} className="cursor-pointer text-xl">
-          Home
-        </p>
-        <p onClick={clickHandlerTopRated} className="cursor-pointer text-xl">
-          Top-Rated
-        </p>
-        <p onClick={clickHandlerUpComings} className="cursor-pointer text-xl">
-          Up-Comings
-        </p>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Enter here to search"
-            className="bg-white w-[300px] h-[35px] rounded-lg text-black p-4"
-            onChange={handleChange}
-          />
-          <button
-            className="border-2 px-4 py-1 rounded-lg  cursor-pointer"
-            onClick={() => searchHandler(movieSearch)}
-          >
-            Search
-          </button>
-        </div>
-      </nav>
+    <div className="text-white pt-24 px-4 bg-black min-h-screen">
+      <h2 className="text-2xl mb-4">Search results for "{query}":</h2>
+      <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+        {results.length > 0 ? (
+          results.map((movie) => (
+            <div key={movie.id}>
+              <img
+                src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                alt={movie.title}
+                className="rounded-lg"
+              />
+              <p className="mt-2 text-lg truncate">{movie.title}</p>
+            </div>
+          ))
+        ) : (
+          <p>No results found.</p>
+        )}
+      </div>
     </div>
   );
 };
-export default Navbar;
+
+export default SearchPage;

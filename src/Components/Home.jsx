@@ -26,20 +26,25 @@ const Home = () => {
   }
   if (movies) {
     return (
-      <div className="w-full flex flex-wrap gap-4 justify-center pt-4 bg-black text-white">
-        {movies.map((movie) => {
-          return (
-            <div key={movie.id} className="flex  flex-col  cursor-pointer">
-              <img
-                src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                className=" h-[300px] w-[300px] object-fit rounded-lg"
-                onClick={()=>handleClick(movie.id)}
-              />
+      <div className="w-full p-14 gap-4 bg-black text-white mx-auto max-w-full pt-[100px]">
+        <div className="grid gap-10  grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {movies.map((movie) => {
+            return (
+              <div key={movie.id} className="grid gap-6 ">
+                <img
+                  src={`https://image.tmdb.org/t/p/original${movie?.poster_path}`}
+                  className=" h-[300px] w-full object-cover rounded-lg"
+                  onClick={() => handleClick(movie.id)}
+                  alt={data?.title}
+                />
 
-              <p className="text-xl font-semibold pt-2 gap-2">{movie.title}</p>
-            </div>
-          );
-        })}
+                <p className="text-xl font-semibold pt-2 gap-2 truncate ">
+                  {movie.title}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

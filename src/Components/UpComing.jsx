@@ -28,21 +28,24 @@ const UpComing = () => {
   }
   if (upComings) {
     return (
-      <div className="flex justify-center items-center w-full  flex-wrap gap-10 pt-4 bg-black text-white">
-        {upComings.map((upComing) => {
-          return (
-            <div key={upComing.id} className="flex flex-col cursor-pointer">
-              <img
-                src={`https://image.tmdb.org/t/p/original${upComing.poster_path}`}
-                className=" h-[300px] w-[300px] object-fit rounded-lg"
-                onClick={() => handleClick(upComing.id)}
-              />
-              <p className="text-xl font-semibold pt-2 gap:2">
-                {upComing.title}
-              </p>
-            </div>
-          );
-        })}
+      <div className=" w-full max-w-full  gap-4 p-14 bg-black text-white pt-[100px]">
+        <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {upComings.map((upComing) => {
+            return (
+              <div key={upComing.id} className="flex flex-col cursor-pointer">
+                <img
+                  src={`https://image.tmdb.org/t/p/original${upComing.poster_path}`}
+                  className=" h-[300px] w-[300px] object-fit rounded-lg"
+                  onClick={() => handleClick(upComing.id)}
+                  alt={data?.title}
+                />
+                <p className="text-xl font-semibold pt-2 gap:2">
+                  {upComing.title}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
