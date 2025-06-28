@@ -1,48 +1,122 @@
-import { useParams } from "react-router";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Menu, X } from "lucide-react"; // ✅ You can use any icon library or SVG
 
-const SearchPage = () => {
-  const { query } = useParams();
-  const [results, setResults] = useState([]);
+const Navbar = () => {
+  const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!query) return;
-      try {
-        const res = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=4e44d9029b1270a757cddc766a1bcb63&language=en-US&query=${query}`
-        );
-        setResults(res.data.results);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/search/${search.trim()}`);
+      setSearch("");
+      setMenuOpen(false); // close menu on mobile after search
+    }
+  };
 
-    fetchData();
-  }, [query]);
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(e);
+    }
+  };
 
   return (
-    <div className="text-white pt-24 px-4 bg-black min-h-screen">
-      <h2 className="text-2xl mb-4">Search results for "{query}":</h2>
-      <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-        {results.length > 0 ? (
-          results.map((movie) => (
-            <div key={movie.id}>
-              <img
-                src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-                alt={movie.title}
-                className="rounded-lg"
-              />
-              <p className="mt-2 text-lg truncate">{movie.title}</p>
-            </div>
-          ))
-        ) : (
-          <p>No results found.</p>
-        )}
+    <nav className="fixed top-0 left-0 w-full z-50 bg-black text-white shadow-md">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        {/* Logo */}
+        <div className="text-2xl font-bold">
+          <Link to="/">OMDB</Link>
+        </div>
+
+        {/* Desktop Nav Links */}
+        <div className="space-x-6 text-lg hidden md:flex">
+          <Link to="/" className="hover:text-red-500 transition">
+            Home
+          </Link>
+          <Link to="/Toprated" className="hover:text-red-500 transition">
+            Top Rated
+          </Link>
+          <Link to="/Upcomings" className="hover:text-red-500 transition">
+            Upcoming
+          </Link>
+        </div>
+
+        {/* Search Box (always visible) */}
+        <form
+          onSubmit={handleSearch}
+          className="hidden md:flex items-center space-x-2"
+        >
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search movies..."
+            className="px-3 py-1 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white"
+          >
+            Search
+          </button>
+        </form>
+
+        {/* Mobile Menu Toggle Button */}
+        <button
+          className="md:hidden text-white"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
-    </div>
+
+      {/* Mobile Nav Panel */}
+      {menuOpen && (
+        <div className="md:hidden px-4 pb-4 bg-black space-y-4">
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="block text-lg hover:text-red-500"
+          >
+            Home
+          </Link>
+          <Link
+            to="/Toprated"
+            onClick={() => setMenuOpen(false)}
+            className="block text-lg hover:text-red-500"
+          >
+            Top Rated
+          </Link>
+          <Link
+            to="/Upcomings"
+            onClick={() => setMenuOpen(false)}
+            className="block text-lg hover:text-red-500"
+          >
+            Upcoming
+          </Link>
+          <form onSubmit={handleSearch} className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search..."
+              className="flex-1 px-3 py-1 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white"
+            >
+              Go
+            </button>
+          </form>
+        </div>
+      )}
+    </nav>
   );
 };
 
-export default SearchPage;
+export default Navbar;
